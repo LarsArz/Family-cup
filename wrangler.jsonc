@@ -1,7 +1,16 @@
 {
   "name": "family-cup",
+  "main": "worker.js",
   "compatibility_date": "2026-10-01",
   "assets": {
-    "directory": "."
-  }
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "family-cup-db",
+      "database_id": "3fc0f5b4-678b-4b54-8304-b9a2bbadd027"
+    }
+  ]
 }
