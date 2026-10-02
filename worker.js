@@ -2,6 +2,23 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (url.pathname.startsWith("/api/nhl/")) {
+      if (request.method !== "GET") return new Response("Method not allowed", { status: 405 });
+      const nhlPath = url.pathname.slice("/api/nhl".length);
+      if (!/^\/(v1\/)?(club-schedule|score)\//.test(nhlPath)) return new Response("Not found", { status: 404 });
+      try {
+        const upstream = await fetch("https://api-web.nhle.com" + nhlPath, {
+          headers: { "accept": "application/json", "user-agent": "ArtznerFamilyCup/1.0" }
+        });
+        return new Response(upstream.body, {
+          status: upstream.status,
+          headers: { "content-type": upstream.headers.get("content-type") || "application/json", "cache-control": "public, max-age=60" }
+        });
+      } catch {
+        return Response.json({ ok: false, error: "NHL upstream unavailable" }, { status: 502 });
+      }
+    }
+
     if (url.pathname === "/api/state") {
       if (request.method === "GET") {
         const row = await env.DB.prepare("SELECT data, updated_at FROM state WHERE id = 1").first();
