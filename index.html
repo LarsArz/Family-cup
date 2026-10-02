@@ -35,6 +35,14 @@ async function pullShared(force=false){
       state={...defaultState(),...(j.data||{})};
       localStorage.setItem(STORE,JSON.stringify(state));
       renderAll();
+      if(state.draftFinalized&&state.cupTeam==="FLA"&&!state.sjsStartCorrection){
+        state.cupTeam="SJS";
+        state.sjsStartCorrection=true;
+        state.history=state.history||[];
+        state.history.push("Oct 1 — San Jose defeated Florida and took the Cup.");
+        await persist();
+        renderAll();
+      }
     }
   }catch(e){}
 }
